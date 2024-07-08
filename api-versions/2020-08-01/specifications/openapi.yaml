@@ -1,1 +1,335 @@
+openapi: 3.0.3
+info:
+  contact:
+    email: dev@monime.io
+    name: Monime Developers
+    url: https://monime.io
+  description: Monime REST API. Please visit https://docs.momime.io/api for more details.
+  termsOfService: https://monime.io/legal/terms-of-service
+  title: Monime API
+  version: "2024-08-01"
+servers:
+- url: https://api.monime.io/
+paths:
+  /banks:
+    get:
+      operationId: ListBanks
+      parameters:
+      - description: The ISO 3166-1 alpha-2 code of the country
+        in: query
+        name: country
+        required: true
+        schema:
+          description: The ISO 3166-1 alpha-2 code of the country
+          maxLength: 2
+          minLength: 2
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  messages:
+                    description: Contains a list of messages providing relevant information
+                      or feedback related to the query or operation
+                    items: {}
+                    type: array
+                  pagination:
+                    description: The pagination info associated with the response
+                    properties:
+                      count:
+                        description: The number of items in the response
+                        minimum: 0
+                        type: integer
+                      next:
+                        description: The cursor to use on subsequent requests to retrieve
+                          the items just after the last item in this response.
+                        nullable: true
+                        type: string
+                      total:
+                        description: The estimated total number of items matching
+                          the request
+                        minimum: 0
+                        nullable: true
+                        type: integer
+                    type: object
+                  result:
+                    description: The list of items in the response
+                    items:
+                      $ref: '#/components/schemas/Bank'
+                    nullable: true
+                    type: array
+                  success:
+                    description: Represents the status of the query operation, confirming
+                      if it was successful. This field is always true
+                    type: boolean
+                type: object
+          description: OK
+      summary: List the banks that Monime supports in a country
+      tags:
+      - Bank
+  /countries:
+    get:
+      operationId: ListCountries
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  messages:
+                    description: Contains a list of messages providing relevant information
+                      or feedback related to the query or operation
+                    items: {}
+                    type: array
+                  pagination:
+                    description: The pagination info associated with the response
+                    properties:
+                      count:
+                        description: The number of items in the response
+                        minimum: 0
+                        type: integer
+                      next:
+                        description: The cursor to use on subsequent requests to retrieve
+                          the items just after the last item in this response.
+                        nullable: true
+                        type: string
+                      total:
+                        description: The estimated total number of items matching
+                          the request
+                        minimum: 0
+                        nullable: true
+                        type: integer
+                    type: object
+                  result:
+                    description: The list of items in the response
+                    items:
+                      $ref: '#/components/schemas/Country'
+                    nullable: true
+                    type: array
+                  success:
+                    description: Represents the status of the query operation, confirming
+                      if it was successful. This field is always true
+                    type: boolean
+                type: object
+          description: OK
+      summary: List countries that Monime currently operates
+      tags:
+      - Country
+  /momos:
+    get:
+      operationId: ListMomos
+      parameters:
+      - description: The ISO 3166-1 alpha-2 code of the country
+        in: query
+        name: country
+        required: true
+        schema:
+          description: The ISO 3166-1 alpha-2 code of the country
+          maxLength: 2
+          minLength: 2
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  messages:
+                    description: Contains a list of messages providing relevant information
+                      or feedback related to the query or operation
+                    items: {}
+                    type: array
+                  pagination:
+                    description: The pagination info associated with the response
+                    properties:
+                      count:
+                        description: The number of items in the response
+                        minimum: 0
+                        type: integer
+                      next:
+                        description: The cursor to use on subsequent requests to retrieve
+                          the items just after the last item in this response.
+                        nullable: true
+                        type: string
+                      total:
+                        description: The estimated total number of items matching
+                          the request
+                        minimum: 0
+                        nullable: true
+                        type: integer
+                    type: object
+                  result:
+                    description: The list of items in the response
+                    items:
+                      $ref: '#/components/schemas/Momo'
+                    nullable: true
+                    type: array
+                  success:
+                    description: Represents the status of the query operation, confirming
+                      if it was successful. This field is always true
+                    type: boolean
+                type: object
+          description: OK
+      summary: List the Mobile Money providers that Monime supports in a country
+      tags:
+      - Momo
+components:
+  schemas:
+    Bank:
+      properties:
+        code:
+          type: string
+        country:
+          type: string
+        createTime:
+          format: date-time
+          type: string
+        featureSet:
+          properties:
+            kycVerification:
+              properties:
+                canVerifyAccount:
+                  type: boolean
+                metadata:
+                  additionalProperties:
+                    type: string
+                  nullable: true
+                  type: object
+              type: object
+            payment:
+              properties:
+                canPayFrom:
+                  type: boolean
+                metadata:
+                  additionalProperties:
+                    type: string
+                  nullable: true
+                  type: object
+                schemes:
+                  items:
+                    type: string
+                  nullable: true
+                  type: array
+              type: object
+            payout:
+              properties:
+                canPayTo:
+                  type: boolean
+                metadata:
+                  additionalProperties:
+                    type: string
+                  nullable: true
+                  type: object
+                schemes:
+                  items:
+                    type: string
+                  nullable: true
+                  type: array
+              type: object
+          type: object
+        name:
+          type: string
+        status:
+          properties:
+            active:
+              type: boolean
+          type: object
+        updateTime:
+          format: date-time
+          type: string
+      type: object
+    Country:
+      properties:
+        code:
+          description: The ISO 3166-1 alpha-2 code of the country
+          type: string
+        currency:
+          properties:
+            code:
+              type: string
+            unit:
+              type: string
+            unitLength:
+              type: integer
+          type: object
+        name:
+          type: string
+        supportedCurrencies:
+          items:
+            type: string
+          nullable: true
+          type: array
+      type: object
+    Momo:
+      properties:
+        code:
+          type: string
+        country:
+          type: string
+        createTime:
+          format: date-time
+          type: string
+        featureSet:
+          properties:
+            kycVerification:
+              properties:
+                canVerifyAccount:
+                  type: boolean
+                metadata:
+                  additionalProperties:
+                    type: string
+                  nullable: true
+                  type: object
+              type: object
+            payment:
+              properties:
+                canPayFrom:
+                  type: boolean
+                metadata:
+                  additionalProperties:
+                    type: string
+                  nullable: true
+                  type: object
+                schemes:
+                  items:
+                    type: string
+                  nullable: true
+                  type: array
+              type: object
+            payout:
+              properties:
+                canPayTo:
+                  type: boolean
+                metadata:
+                  additionalProperties:
+                    type: string
+                  nullable: true
+                  type: object
+                schemes:
+                  items:
+                    type: string
+                  nullable: true
+                  type: array
+              type: object
+          type: object
+        name:
+          type: string
+        status:
+          properties:
+            active:
+              type: boolean
+          type: object
+        updateTime:
+          format: date-time
+          type: string
+      type: object
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: auth-scheme
+      description: 'Bearer HTTP authentication specified with the header Authorization:
+        Bearer <access_token>'
+      scheme: bearer
+      type: http
 
