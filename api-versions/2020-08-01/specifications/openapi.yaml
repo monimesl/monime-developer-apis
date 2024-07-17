@@ -39,17 +39,21 @@ paths:
                     description: The pagination info associated with the response
                     properties:
                       count:
-                        description: The number of items in the response
+                        description: The number of items in this list response.
                         minimum: 0
                         type: integer
                       next:
-                        description: The cursor to use on subsequent requests to retrieve
-                          the items just after the last item in this response.
+                        description: This identifier marks the first item in this
+                          response list when moving backward through the results,
+                          or the last item when moving forward. Use this identifier
+                          with the 'after' or 'before' query parameter in your next
+                          request to get the items that come after or before this
+                          item in the overall list respectively.
                         nullable: true
                         type: string
                       total:
                         description: The estimated total number of items matching
-                          the request
+                          the request.
                         minimum: 0
                         nullable: true
                         type: integer
@@ -87,17 +91,21 @@ paths:
                     description: The pagination info associated with the response
                     properties:
                       count:
-                        description: The number of items in the response
+                        description: The number of items in this list response.
                         minimum: 0
                         type: integer
                       next:
-                        description: The cursor to use on subsequent requests to retrieve
-                          the items just after the last item in this response.
+                        description: This identifier marks the first item in this
+                          response list when moving backward through the results,
+                          or the last item when moving forward. Use this identifier
+                          with the 'after' or 'before' query parameter in your next
+                          request to get the items that come after or before this
+                          item in the overall list respectively.
                         nullable: true
                         type: string
                       total:
                         description: The estimated total number of items matching
-                          the request
+                          the request.
                         minimum: 0
                         nullable: true
                         type: integer
@@ -145,17 +153,21 @@ paths:
                     description: The pagination info associated with the response
                     properties:
                       count:
-                        description: The number of items in the response
+                        description: The number of items in this list response.
                         minimum: 0
                         type: integer
                       next:
-                        description: The cursor to use on subsequent requests to retrieve
-                          the items just after the last item in this response.
+                        description: This identifier marks the first item in this
+                          response list when moving backward through the results,
+                          or the last item when moving forward. Use this identifier
+                          with the 'after' or 'before' query parameter in your next
+                          request to get the items that come after or before this
+                          item in the overall list respectively.
                         nullable: true
                         type: string
                       total:
                         description: The estimated total number of items matching
-                          the request
+                          the request.
                         minimum: 0
                         nullable: true
                         type: integer
@@ -175,6 +187,716 @@ paths:
       summary: List the Mobile Money providers that Monime supports in a country
       tags:
       - Momo
+  /payment-codes:
+    get:
+      operationId: ListPaymentCodes
+      parameters:
+      - description: This identifier retrieves the next items in the total result
+          list that come just after it. Use it to get items that follows this identifier
+          in the overall list. This takes precedence over 'before'.
+        in: query
+        name: after
+        schema:
+          description: This identifier retrieves the next items in the total result
+            list that come just after it. Use it to get items that follows this identifier
+            in the overall list. This takes precedence over 'before'.
+          maxLength: 100
+          nullable: true
+          type: string
+      - description: This identifier retrieves the next items in the total result
+          list that come just before it. Use it to get items that precede this identifier
+          in the overall list.
+        in: query
+        name: before
+        schema:
+          description: This identifier retrieves the next items in the total result
+            list that come just before it. Use it to get items that precede this identifier
+            in the overall list.
+          maxLength: 100
+          nullable: true
+          type: string
+      - description: The maximum number of items per page that should be retrieved
+          from the result list.
+        in: query
+        name: limit
+        schema:
+          default: 10
+          description: The maximum number of items per page that should be retrieved
+            from the result list.
+          maximum: 50
+          minimum: 1
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  messages:
+                    description: Contains a list of messages providing relevant information
+                      or feedback related to the query or operation
+                    items: {}
+                    type: array
+                  pagination:
+                    description: The pagination info associated with the response
+                    properties:
+                      count:
+                        description: The number of items in this list response.
+                        minimum: 0
+                        type: integer
+                      next:
+                        description: This identifier marks the first item in this
+                          response list when moving backward through the results,
+                          or the last item when moving forward. Use this identifier
+                          with the 'after' or 'before' query parameter in your next
+                          request to get the items that come after or before this
+                          item in the overall list respectively.
+                        nullable: true
+                        type: string
+                      total:
+                        description: The estimated total number of items matching
+                          the request.
+                        minimum: 0
+                        nullable: true
+                        type: integer
+                    type: object
+                  result:
+                    description: The list of items in the response
+                    items:
+                      $ref: '#/components/schemas/PaymentCode'
+                    nullable: true
+                    type: array
+                  success:
+                    description: Represents the status of the query operation, confirming
+                      if it was successful. This field is always true
+                    type: boolean
+                type: object
+          description: OK
+      summary: List the payment codes
+      tags:
+      - PaymentCode
+    post:
+      operationId: CreatePaymentCode
+      parameters:
+      - description: This header is used to uniquely identify a request, ensuring
+          that the operation is not performed more than once during retries.
+        in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          description: This header is used to uniquely identify a request, ensuring
+            that the operation is not performed more than once during retries.
+          maxLength: 100
+          minLength: 30
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                allowedProviders:
+                  description: list of payment providers for which the code is allowed
+                  items:
+                    type: string
+                  maxItems: 1
+                  nullable: true
+                  type: array
+                  uniqueItems: true
+                amount:
+                  description: The amount to be paid. If Mode is recurrent, and financial
+                    target sum is also set, this represents the amount to be paid
+                    for every instance of payment for this code.
+                  properties:
+                    currency:
+                      description: The ISO 4217 currency code.
+                      type: string
+                    value:
+                      description: The value representation in the currency's minor
+                        unit. E.g. For 1 Leone(SLE 1), the value should be 100, denoting
+                        cents, the minor unit.
+                      type: integer
+                  type: object
+                customerTarget:
+                  description: The customer this payment code is targeting
+                  nullable: true
+                  properties:
+                    name:
+                      type: string
+                    payingPhoneNumber:
+                      type: string
+                    reference:
+                      type: string
+                  type: object
+                duration:
+                  description: The duration of the payment code
+                  type: string
+                financialTarget:
+                  description: The financial target for this payment code
+                  nullable: true
+                  properties:
+                    expectedPaymentCount:
+                      description: The number of payments expected after which the
+                        code gets completed.
+                      nullable: true
+                      type: integer
+                    expectedPaymentSum:
+                      description: The sum of payment amounts expected after which
+                        the code gets completed.
+                      properties:
+                        currency:
+                          description: The ISO 4217 currency code.
+                          type: string
+                        value:
+                          description: The value representation in the currency's
+                            minor unit. E.g. For 1 Leone(SLE 1), the value should
+                            be 100, denoting cents, the minor unit.
+                          type: integer
+                      type: object
+                  type: object
+                isActive:
+                  default: true
+                  description: Denotes whether the payment code is active
+                  type: boolean
+                metadata:
+                  additionalProperties:
+                    type: string
+                  description: The metadata for the payment code
+                  nullable: true
+                  type: object
+                mode:
+                  default: oneTime
+                  description: Denote whether the payment code can be used one time
+                    or multiple.
+                  type: string
+                name:
+                  description: The name or intent for the payment code
+                  maxLength: 100
+                  nullable: true
+                  type: string
+              title: CreatePaymentCode
+              type: object
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  messages:
+                    description: Contains a list of messages providing relevant information
+                      or feedback related to the query or operation
+                    items: {}
+                    type: array
+                  result:
+                    $ref: '#/components/schemas/PaymentCode'
+                  success:
+                    description: Represents the status of the query operation, confirming
+                      if it was successful. This field is always true
+                    type: boolean
+                type: object
+          description: OK
+      summary: Create a payment code
+      tags:
+      - PaymentCode
+  /payment-codes/{id}:
+    delete:
+      operationId: DeletePaymentCode
+      parameters:
+      - description: The ID for the payment code object to delete
+        in: path
+        name: id
+        required: true
+        schema:
+          description: The ID for the payment code object to delete
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  messages:
+                    description: Contains a list of messages providing relevant information
+                      or feedback related to the query or operation
+                    items: {}
+                    type: array
+                  success:
+                    description: Represents the status of the query operation, confirming
+                      if it was successful. This field is always true
+                    type: boolean
+                type: object
+          description: OK
+      summary: Delete a payment code
+      tags:
+      - PaymentCode
+    get:
+      operationId: GetPaymentCode
+      parameters:
+      - description: The ID for the payment code object to retrieve
+        in: path
+        name: id
+        required: true
+        schema:
+          description: The ID for the payment code object to retrieve
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  messages:
+                    description: Contains a list of messages providing relevant information
+                      or feedback related to the query or operation
+                    items: {}
+                    type: array
+                  result:
+                    $ref: '#/components/schemas/PaymentCode'
+                  success:
+                    description: Represents the status of the query operation, confirming
+                      if it was successful. This field is always true
+                    type: boolean
+                type: object
+          description: OK
+      summary: Get a payment code
+      tags:
+      - PaymentCode
+    patch:
+      operationId: UpdatePaymentCode
+      parameters:
+      - description: The ID for the payment code object to update
+        in: path
+        name: id
+        required: true
+        schema:
+          description: The ID for the payment code object to update
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                allowedProviders:
+                  description: list of payment providers for which the code is allowed
+                  items:
+                    type: string
+                  maxItems: 1
+                  nullable: true
+                  type: array
+                  uniqueItems: true
+                expireTime:
+                  description: The expiration time of the payment code
+                  format: date-time
+                  type: string
+                isActive:
+                  default: true
+                  description: Denotes whether the payment code is active
+                  nullable: true
+                  type: boolean
+                metadata:
+                  additionalProperties:
+                    type: string
+                  description: The metadata for the payment code
+                  nullable: true
+                  type: object
+                name:
+                  description: The name or intent for the payment code
+                  maxLength: 100
+                  nullable: true
+                  type: string
+                status:
+                  description: The status of the payment code
+                  enum:
+                  - cancelled
+                  nullable: true
+                  type: string
+              title: UpdatePaymentCode
+              type: object
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  messages:
+                    description: Contains a list of messages providing relevant information
+                      or feedback related to the query or operation
+                    items: {}
+                    type: array
+                  result:
+                    $ref: '#/components/schemas/PaymentCode'
+                  success:
+                    description: Represents the status of the query operation, confirming
+                      if it was successful. This field is always true
+                    type: boolean
+                type: object
+          description: OK
+      summary: Update a payment code
+      tags:
+      - PaymentCode
+  /webhooks:
+    get:
+      operationId: ListWebhooks
+      parameters:
+      - description: This identifier retrieves the next items in the total result
+          list that come just after it. Use it to get items that follows this identifier
+          in the overall list. This takes precedence over 'before'.
+        in: query
+        name: after
+        schema:
+          description: This identifier retrieves the next items in the total result
+            list that come just after it. Use it to get items that follows this identifier
+            in the overall list. This takes precedence over 'before'.
+          maxLength: 100
+          nullable: true
+          type: string
+      - description: This identifier retrieves the next items in the total result
+          list that come just before it. Use it to get items that precede this identifier
+          in the overall list.
+        in: query
+        name: before
+        schema:
+          description: This identifier retrieves the next items in the total result
+            list that come just before it. Use it to get items that precede this identifier
+            in the overall list.
+          maxLength: 100
+          nullable: true
+          type: string
+      - description: The maximum number of items per page that should be retrieved
+          from the result list.
+        in: query
+        name: limit
+        schema:
+          default: 10
+          description: The maximum number of items per page that should be retrieved
+            from the result list.
+          maximum: 50
+          minimum: 1
+          type: integer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  messages:
+                    description: Contains a list of messages providing relevant information
+                      or feedback related to the query or operation
+                    items: {}
+                    type: array
+                  pagination:
+                    description: The pagination info associated with the response
+                    properties:
+                      count:
+                        description: The number of items in this list response.
+                        minimum: 0
+                        type: integer
+                      next:
+                        description: This identifier marks the first item in this
+                          response list when moving backward through the results,
+                          or the last item when moving forward. Use this identifier
+                          with the 'after' or 'before' query parameter in your next
+                          request to get the items that come after or before this
+                          item in the overall list respectively.
+                        nullable: true
+                        type: string
+                      total:
+                        description: The estimated total number of items matching
+                          the request.
+                        minimum: 0
+                        nullable: true
+                        type: integer
+                    type: object
+                  result:
+                    description: The list of items in the response
+                    items:
+                      $ref: '#/components/schemas/Webhook'
+                    nullable: true
+                    type: array
+                  success:
+                    description: Represents the status of the query operation, confirming
+                      if it was successful. This field is always true
+                    type: boolean
+                type: object
+          description: OK
+      summary: List the webhooks
+      tags:
+      - Webhook
+    post:
+      operationId: CreateWebhook
+      parameters:
+      - description: This header is used to uniquely identify a request, ensuring
+          that the operation is not performed more than once during retries.
+        in: header
+        name: Idempotency-Key
+        required: true
+        schema:
+          description: This header is used to uniquely identify a request, ensuring
+            that the operation is not performed more than once during retries.
+          maxLength: 100
+          minLength: 30
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                alertEmails:
+                  description: The list email address to send alert notifications
+                    to when the webhook is failing.
+                  items:
+                    type: string
+                  maxItems: 3
+                  nullable: true
+                  type: array
+                  uniqueItems: true
+                apiVersion:
+                  description: The API version the webhook supports.
+                  type: string
+                customHeaders:
+                  additionalProperties:
+                    type: string
+                  description: Custom headers of the webhook.
+                  nullable: true
+                  type: object
+                events:
+                  description: The list of events the webhook is subscribed to.
+                  items:
+                    type: string
+                  maxItems: 100
+                  minItems: 1
+                  nullable: true
+                  type: array
+                  uniqueItems: true
+                isActive:
+                  default: false
+                  description: Denotes whether the webhook is active.
+                  type: boolean
+                metadata:
+                  additionalProperties:
+                    type: string
+                  description: Metadata attributes of the webhook.
+                  nullable: true
+                  type: object
+                name:
+                  description: The name of the webhook.
+                  maxLength: 100
+                  minLength: 1
+                  type: string
+                url:
+                  description: The URL of the webhook
+                  type: string
+                verificationMethod:
+                  description: The verification method of the webhook.
+                  nullable: true
+                  properties:
+                    hmac256:
+                      description: A HMAC-256 method to verify the webhook
+                      properties:
+                        secret:
+                          description: Secret used to verify the webhook's signature.
+                          maxLength: 100
+                          minLength: 32
+                          type: string
+                      required:
+                      - secret
+                      type: object
+                  type: object
+              required:
+              - name
+              - url
+              - events
+              title: CreateWebhook
+              type: object
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  messages:
+                    description: Contains a list of messages providing relevant information
+                      or feedback related to the query or operation
+                    items: {}
+                    type: array
+                  result:
+                    $ref: '#/components/schemas/Webhook'
+                  success:
+                    description: Represents the status of the query operation, confirming
+                      if it was successful. This field is always true
+                    type: boolean
+                type: object
+          description: OK
+      summary: Create a webhook
+      tags:
+      - Webhook
+  /webhooks/{id}:
+    delete:
+      operationId: DeleteWebhook
+      parameters:
+      - description: The ID for the webhook object to delete
+        in: path
+        name: id
+        required: true
+        schema:
+          description: The ID for the webhook object to delete
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  messages:
+                    description: Contains a list of messages providing relevant information
+                      or feedback related to the query or operation
+                    items: {}
+                    type: array
+                  success:
+                    description: Represents the status of the query operation, confirming
+                      if it was successful. This field is always true
+                    type: boolean
+                type: object
+          description: OK
+      summary: Delete a webhook
+      tags:
+      - Webhook
+    get:
+      operationId: GetWebhook
+      parameters:
+      - description: The ID for the webhook object to retrieve
+        in: path
+        name: id
+        required: true
+        schema:
+          description: The ID for the webhook object to retrieve
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  messages:
+                    description: Contains a list of messages providing relevant information
+                      or feedback related to the query or operation
+                    items: {}
+                    type: array
+                  result:
+                    $ref: '#/components/schemas/Webhook'
+                  success:
+                    description: Represents the status of the query operation, confirming
+                      if it was successful. This field is always true
+                    type: boolean
+                type: object
+          description: OK
+      summary: Get a webhook
+      tags:
+      - Webhook
+    patch:
+      operationId: UpdateWebhook
+      parameters:
+      - description: The ID for the webhook object to update
+        in: path
+        name: id
+        required: true
+        schema:
+          description: The ID for the webhook object to update
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                alertEmails:
+                  description: The list email address to send alert notifications
+                    to when the webhook is failing.
+                  items:
+                    type: string
+                  maxItems: 3
+                  nullable: true
+                  type: array
+                  uniqueItems: true
+                apiVersion:
+                  description: The API version the webhook supports.
+                  nullable: true
+                  type: string
+                customHeaders:
+                  additionalProperties:
+                    type: string
+                  description: Custom headers of the webhook.
+                  nullable: true
+                  type: object
+                events:
+                  description: The list of events the webhook is subscribed to.
+                  items:
+                    type: string
+                  maxItems: 100
+                  minItems: 1
+                  nullable: true
+                  type: array
+                  uniqueItems: true
+                isActive:
+                  default: false
+                  description: Denotes whether the webhook is active.
+                  nullable: true
+                  type: boolean
+                metadata:
+                  additionalProperties:
+                    type: string
+                  description: Metadata attributes of the webhook.
+                  nullable: true
+                  type: object
+                name:
+                  description: The name of the webhook.
+                  maxLength: 100
+                  minLength: 1
+                  nullable: true
+                  type: string
+                url:
+                  description: The URL of the webhook
+                  type: string
+                verificationMethod:
+                  description: The verification method of the webhook.
+                  nullable: true
+                  properties:
+                    hmac256:
+                      description: A HMAC-256 method to verify the webhook
+                      properties:
+                        secret:
+                          description: Secret used to verify the webhook's signature.
+                          maxLength: 100
+                          minLength: 32
+                          type: string
+                      required:
+                      - secret
+                      type: object
+                  type: object
+              required:
+              - events
+              title: UpdateWebhook
+              type: object
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  messages:
+                    description: Contains a list of messages providing relevant information
+                      or feedback related to the query or operation
+                    items: {}
+                    type: array
+                  result:
+                    $ref: '#/components/schemas/Webhook'
+                  success:
+                    description: Represents the status of the query operation, confirming
+                      if it was successful. This field is always true
+                    type: boolean
+                type: object
+          description: OK
+      summary: Update a webhook
+      tags:
+      - Webhook
 components:
   schemas:
     Bank:
@@ -325,6 +1047,163 @@ components:
           format: date-time
           type: string
       type: object
+    PaymentCode:
+      properties:
+        allowedProviders:
+          description: list of payment providers for which the code is allowed
+          items:
+            type: string
+          nullable: true
+          type: array
+        amount:
+          description: The amount to be paid. If Mode is recurrent, and financial
+            target sum is also set, this represents the amount to be paid for every
+            instance of payment for this code.
+          properties:
+            currency:
+              description: The ISO 4217 currency code.
+              type: string
+            value:
+              description: The value representation in the currency's minor unit.
+                E.g. For 1 Leone(SLE 1), the value should be 100, denoting cents,
+                the minor unit.
+              type: integer
+          type: object
+        createTime:
+          description: The creation time of the payment code
+          format: date-time
+          type: string
+        customerTarget:
+          description: The customer this payment code is targeting
+          nullable: true
+          properties:
+            name:
+              type: string
+            payingPhoneNumber:
+              type: string
+            reference:
+              type: string
+          type: object
+        expireTime:
+          description: The expiration time of the payment code
+          format: date-time
+          type: string
+        financialTarget:
+          description: The financial target for this payment code
+          nullable: true
+          properties:
+            expectedPaymentCount:
+              description: The number of payments expected after which the code gets
+                completed.
+              nullable: true
+              type: integer
+            expectedPaymentSum:
+              description: The sum of payment amounts expected after which the code
+                gets completed.
+              properties:
+                currency:
+                  description: The ISO 4217 currency code.
+                  type: string
+                value:
+                  description: The value representation in the currency's minor unit.
+                    E.g. For 1 Leone(SLE 1), the value should be 100, denoting cents,
+                    the minor unit.
+                  type: integer
+              type: object
+          type: object
+        id:
+          description: The ID for the payment code object
+          type: string
+        isActive:
+          description: Denotes whether the payment code is active
+          type: boolean
+        metadata:
+          additionalProperties:
+            type: string
+          description: The metadata for the payment code
+          nullable: true
+          type: object
+        mode:
+          description: Denote whether the payment code can be used one time or multiple.
+          type: string
+        name:
+          description: The name or intent for the payment code
+          nullable: true
+          type: string
+        progress:
+          description: The progress of the payment code
+          properties:
+            isCompleted:
+              description: Indicate whether the payment code is completed or not.
+              type: boolean
+            totalPaymentCount:
+              description: Represents the total number of payments made using this
+                code.
+              type: integer
+            totalPaymentSum:
+              description: Represents the total sum of payment amounts made using
+                this code.
+              properties:
+                currency:
+                  description: The ISO 4217 currency code.
+                  type: string
+                value:
+                  description: The value representation in the currency's minor unit.
+                    E.g. For 1 Leone(SLE 1), the value should be 100, denoting cents,
+                    the minor unit.
+                  type: integer
+              type: object
+          type: object
+        status:
+          description: The status of the payment code
+          enum:
+          - pending
+          - processing
+          - expired
+          - cancelled
+          - completed
+          type: string
+        ussdCode:
+          description: The USSD code that can be dial to make payment for this code
+          type: string
+      type: object
+    Webhook:
+      properties:
+        alertEmails:
+          description: The list email address to send alert notifications to when
+            the webhook is failing.
+          items:
+            type: string
+          nullable: true
+          type: array
+        apiVersion:
+          description: The API version the webhook supports.
+          type: string
+        events:
+          description: The list of events the webhook is subscribed to.
+          items:
+            type: string
+          nullable: true
+          type: array
+        id:
+          description: The ID for the webhook object
+          type: string
+        isActive:
+          description: Denotes whether the webhook is active.
+          type: boolean
+        metadata:
+          additionalProperties:
+            type: string
+          description: Metadata attributes of the webhook.
+          nullable: true
+          type: object
+        name:
+          description: The name of the webhook.
+          type: string
+        url:
+          description: The URl of the webhook
+          type: string
+      type: object
   securitySchemes:
     bearerAuth:
       bearerFormat: auth-scheme
@@ -332,4 +1211,3 @@ components:
         Bearer <access_token>'
       scheme: bearer
       type: http
-
