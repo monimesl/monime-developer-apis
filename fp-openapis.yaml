@@ -264,7 +264,7 @@ paths:
                     - PAY
                   type: string
                 data:
-                  type: array
+                  type: object
                   oneOf:
                     - type: object
                       properties:
