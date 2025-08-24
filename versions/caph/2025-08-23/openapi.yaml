@@ -2991,7 +2991,7 @@ paths:
       tags:
         - Receipt
       summary: Redeem Receipt
-      description: Redeem entitlements on a receipt (single, bulk, or all). If any of the entitlements has completed redemption, the entire redemption is considered a failure.
+      description: Redeem one or more entitlements from a receipt. When processing a bulk redemption, if any entitlement is already exhausted, the entire operation is rejected.
       operationId: RedeemReceipt
       parameters:
         - name: orderNumber
@@ -3033,7 +3033,38 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RedeemReceipt"
+              title: Redeem Receipt
+              type: object
+              properties:
+                redeemAll:
+                  type: boolean
+                  description: Whether to redeem all entitlements in the receipt.
+                  nullable: true
+                entitlements:
+                  type: array
+                  items:
+                    required:
+                      - key
+                    type: object
+                    properties:
+                      key:
+                        maxLength: 100
+                        minLength: 1
+                        type: string
+                        description: Stable entitlement key (e.g., SKU, ticket_type, or any identifier unique to the product).
+                      units:
+                        minimum: 1
+                        type: integer
+                        description: Units of entitlement to redeem. This should not exceed the remaining quantity of the entitlement.
+                        default: 1
+                  description: List of entitlements to redeem. When set, it takes precedence over the 'redeemAll' flag.
+                  nullable: true
+                metadata:
+                  maxProperties: 64
+                  type: object
+                  description: Optional metadata for attaching context or tracking info.
+                  nullable: true
+              description: Redeem one or more entitlements from a receipt. When processing a bulk redemption, if any entitlement is already exhausted, the entire operation is rejected.
       responses:
         "200":
           description: OK
@@ -3050,7 +3081,15 @@ paths:
                     items: { }
                     description: Contains a list of messages providing relevant information or feedback related to the query or operation
                   result:
-                    $ref: "#/components/schemas/Receipt"
+                    title: Redemption Result
+                    type: object
+                    properties:
+                      redeem:
+                        type: boolean
+                        description: Whether the redemption was successful. This will be false if any of the entitlements had already been fully redeemed.
+                      receipt:
+                        $ref: "#/components/schemas/Receipt"
+                    description: Represents the outcome of redeeming entitlement(s) from a receipt.
   /v1/ussd-otps:
     get:
       tags:
@@ -5357,7 +5396,7 @@ components:
             properties:
               key:
                 type: string
-                description: Stable entitlement key (e.g., SKU, ticket_type, or any identifier unique to the product
+                description: Stable entitlement key (e.g., SKU, ticket_type, or any unique product identifier).
               name:
                 type: string
                 description: Human-friendly name of the entitlement.
@@ -5369,68 +5408,47 @@ components:
               current:
                 minimum: 0
                 type: integer
-                description: Number of times this entitlement has has been redeemed so far.
-              completed:
+                description: Number of times this entitlement has been redeemed so far.
+              remaining:
+                minimum: 0
+                type: integer
+                description: "Number of redemptions still available (limit - current)."
+              exhausted:
                 type: boolean
-                description: True if the entitlement has been fully redeemed (i.e. current == limit).
-              metadata:
-                maxProperties: 64
-                type: object
-                description: Metadata holding additional context for this entitlement.
-                nullable: true
+                description: True if the entitlement has no remaining redemptions (i.e. current == limit).
             description: |-
-              **Entitlement** represents a right granted by a receipt that can be consumed through redemption. 
+              **Entitlement** represents a right granted by a receipt that can be consumed through redemption.
               
               Each entitlement has:
               - **key** – a stable identifier for the entitlement (e.g., SKU, ticket_type, or any identifier unique to the product).
-              - **limit** – the maximum allowed redemptions, i.e. maximum number of times the entitlement can be redeemed.
-              - **current** – the number of times the entitlement has been redeemed so far. This value is always less than or equal to the limit.
-              - **completed** – indicates whether the entitlement is fully redeemed (all allowed uses consumed); only true when current == limit.
-          description: Entitlements granted by this receipt; each can be redeemed until completed.
+              - **name** – an optional, human-friendly label for the entitlement.
+              - **limit** – the maximum number of times the entitlement can be redeemed.
+              - **current** – the number of times the entitlement has been redeemed so far (always less than or equal to limit).
+              - **remaining** – how many redemptions are still available (calculated as limit - current).
+              - **exhausted** – true when the entitlement has been fully redeemed (remaining == 0).
+          description: Entitlements granted by this receipt; each can be redeemed until exhausted.
           nullable: true
         metadata:
           maxProperties: 64
           type: object
           description: Optional metadata for attaching context or tracking info.
           nullable: true
-    RedeemReceipt:
-      title: Redeem Receipt
-      type: object
-      properties:
-        redeemAll:
-          type: boolean
-          description: Whether to redeem all entitlements in the receipt.
-          nullable: true
-        entitlements:
-          type: array
-          items:
-            required:
-              - key
-            type: object
-            properties:
-              key:
-                maxLength: 100
-                minLength: 1
-                type: string
-                description: Stable entitlement key (e.g., SKU, ticket_type, or any identifier unique to the product).
-              units:
-                minimum: 1
-                type: integer
-                description: Units of entitlement to redeem. This should not exceed the remaining quantity of the entitlement.
-                default: 1
-              metadata:
-                maxProperties: 64
-                type: object
-                description: Optional metadata for attaching context to this entitlement on successful redemption.
-                nullable: true
-          description: List of entitlements to redeem. When set, it takes precedence over the 'redeemAll' flag.
-          nullable: true
-        metadata:
-          maxProperties: 64
-          type: object
-          description: Optional metadata for attaching context or tracking info.
-          nullable: true
-      description: Redeem entitlements on a receipt (single, bulk, or all). If any of the entitlements has completed redemption, the entire redemption is considered a failure.
+      description: |+
+        A **Receipt** is a record of entitlements generated by Monime whenever a payment completes successfully.  
+        It serves as proof of what the customer is entitled to claim — such as tickets, vouchers, credits, or digital rights.  
+        Receipt links a **payment** via an order to **entitlement claims**, enabling both verification and controlled redemption via APIs.   
+        
+        ### Use Cases
+        
+        - **Purchase Verification**  
+          Confirm that a customer’s payment went through and display transaction details in your app without manual reconciliation.  
+        
+        - **Ticket & Voucher Redemption**  
+          Use receipts as redeemable proof of access — for example, scanning a receipt at an event gate or validating a voucher at checkout.  
+        
+        - **Partial Consumption**  
+          Support use cases where receipts hold multiple entitlements, such as ride credits or digital assets, and allow them to be redeemed incrementally.  
+
     UssdOtp:
       title: USSD OTP
       type: object
