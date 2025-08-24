@@ -5,29 +5,29 @@ info:
   termsOfService: https://monime.io/legal/terms-of-service
   contact:
     name: Monime Developers
-    url: https://monime.io
+    url: https://github.com/monimesl
     email: dev@monime.io
   version: "2024-08-01"
 servers:
-- url: https://api.monime.io/
+  - url: https://api.monime.io/
 paths:
   /banks:
     get:
       tags:
-      - Bank
+        - Bank
       summary: List Banks
       description: List the banks that Monime supports in a country.
       operationId: ListBanks
       parameters:
-      - name: country
-        in: query
-        description: The ISO 3166-1 alpha-2 code of the country
-        required: true
-        schema:
-          maxLength: 2
-          minLength: 2
-          type: string
+        - name: country
+          in: query
           description: The ISO 3166-1 alpha-2 code of the country
+          required: true
+          schema:
+            maxLength: 2
+            minLength: 2
+            type: string
+            description: The ISO 3166-1 alpha-2 code of the country
       responses:
         "200":
           description: OK
@@ -69,17 +69,17 @@ paths:
   /banks/{idOrCode}:
     get:
       tags:
-      - Bank
+        - Bank
       summary: Get Bank
       operationId: GetBank
       parameters:
-      - name: idOrCode
-        in: path
-        description: The id or code for the bank.
-        required: true
-        schema:
-          type: string
+        - name: idOrCode
+          in: path
           description: The id or code for the bank.
+          required: true
+          schema:
+            type: string
+            description: The id or code for the bank.
       responses:
         "200":
           description: OK
@@ -100,7 +100,7 @@ paths:
   /countries:
     get:
       tags:
-      - Country
+        - Country
       summary: List Countries
       description: Retrieve a list of all countries where Monime operates its services, providing detailed information about each supported country.
       operationId: ListCountries
@@ -145,17 +145,17 @@ paths:
   /countries/{idOrCode}:
     get:
       tags:
-      - Country
+        - Country
       summary: Get Country
       operationId: GetCountry
       parameters:
-      - name: idOrCode
-        in: path
-        description: The id or country code for the country.
-        required: true
-        schema:
-          type: string
+        - name: idOrCode
+          in: path
           description: The id or country code for the country.
+          required: true
+          schema:
+            type: string
+            description: The id or country code for the country.
       responses:
         "200":
           description: OK
@@ -173,23 +173,69 @@ paths:
                     description: Contains a list of messages providing relevant information or feedback related to the query or operation
                   result:
                     $ref: "#/components/schemas/Country"
+  /kyc-verifications/{providerCode}:
+    get:
+      tags:
+        - KYCVerification
+      summary: Get KYC Verification
+      operationId: GetKYCVerification
+      parameters:
+        - name: accountId
+          in: query
+          description: The ID of the account in the provider to be verified.
+          required: true
+          schema:
+            type: string
+            description: The ID of the account in the provider to be verified.
+        - name: accountType
+          in: query
+          description: The type of the account to be verified. Some providers like m17(Orange Money SL) can issue the same account ID(MSISDN) to different account types.
+          schema:
+            enum:
+              - merchant
+            type: string
+            description: The type of the account to be verified. Some providers like m17(Orange Money SL) can issue the same account ID(MSISDN) to different account types.
+        - name: providerCode
+          in: path
+          description: The code for the provider as identified by Monime.
+          required: true
+          schema:
+            type: string
+            description: The code for the provider as identified by Monime.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Represents the status of the query operation, confirming if it was successful. This field is always true
+                  messages:
+                    type: array
+                    items: {}
+                    description: Contains a list of messages providing relevant information or feedback related to the query or operation
+                  result:
+                    $ref: "#/components/schemas/KYCVerification"
   /momos:
     get:
       tags:
-      - Momo
+        - Momo
       summary: List MoMos
       description: List the mobile money providers that Monime supports in a country.
       operationId: ListMomos
       parameters:
-      - name: country
-        in: query
-        description: The ISO 3166-1 alpha-2 code of the country
-        required: true
-        schema:
-          maxLength: 2
-          minLength: 2
-          type: string
+        - name: country
+          in: query
           description: The ISO 3166-1 alpha-2 code of the country
+          required: true
+          schema:
+            maxLength: 2
+            minLength: 2
+            type: string
+            description: The ISO 3166-1 alpha-2 code of the country
       responses:
         "200":
           description: OK
@@ -231,17 +277,17 @@ paths:
   /momos/{idOrCode}:
     get:
       tags:
-      - Momo
+        - Momo
       summary: Get Momo
       operationId: GetMomo
       parameters:
-      - name: idOrCode
-        in: path
-        description: The id or code for the momo.
-        required: true
-        schema:
-          type: string
+        - name: idOrCode
+          in: path
           description: The id or code for the momo.
+          required: true
+          schema:
+            type: string
+            description: The id or code for the momo.
       responses:
         "200":
           description: OK
@@ -262,44 +308,44 @@ paths:
   /payment-codes:
     get:
       tags:
-      - PaymentCode
+        - PaymentCode
       summary: List Payment Codes
       operationId: ListPaymentCodes
       parameters:
-      - name: after
-        in: query
-        description: This identifier retrieves the next items in the total result list that come just after it. Use it to get items that follows the object having this identifier in the overall list. This takes precedence over 'before'.
-        schema:
-          maxLength: 100
-          type: string
+        - name: after
+          in: query
           description: This identifier retrieves the next items in the total result list that come just after it. Use it to get items that follows the object having this identifier in the overall list. This takes precedence over 'before'.
-          nullable: true
-      - name: before
-        in: query
-        description: This identifier retrieves the next items in the total result list that comes just before it. Use it to get items that precede the object having this identifier in the overall list.
-        schema:
-          maxLength: 100
-          type: string
+          schema:
+            maxLength: 100
+            type: string
+            description: This identifier retrieves the next items in the total result list that come just after it. Use it to get items that follows the object having this identifier in the overall list. This takes precedence over 'before'.
+            nullable: true
+        - name: before
+          in: query
           description: This identifier retrieves the next items in the total result list that comes just before it. Use it to get items that precede the object having this identifier in the overall list.
-          nullable: true
-      - name: limit
-        in: query
-        description: The maximum number of items per page that should be retrieved from the result list.
-        schema:
-          maximum: 50
-          minimum: 1
-          type: integer
+          schema:
+            maxLength: 100
+            type: string
+            description: This identifier retrieves the next items in the total result list that comes just before it. Use it to get items that precede the object having this identifier in the overall list.
+            nullable: true
+        - name: limit
+          in: query
           description: The maximum number of items per page that should be retrieved from the result list.
-          default: 10
-      - name: Monime-Space-Id
-        in: header
-        description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
-        required: true
-        schema:
-          maxLength: 100
-          pattern: ^spc-.*$
-          type: string
+          schema:
+            maximum: 50
+            minimum: 1
+            type: integer
+            description: The maximum number of items per page that should be retrieved from the result list.
+            default: 10
+        - name: Monime-Space-Id
+          in: header
           description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
+          required: true
+          schema:
+            maxLength: 100
+            pattern: ^spc-.*$
+            type: string
+            description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
       responses:
         "200":
           description: OK
@@ -340,27 +386,27 @@ paths:
                     description: The pagination info associated with the response
     post:
       tags:
-      - PaymentCode
+        - PaymentCode
       summary: Create Payment Code
       operationId: CreatePaymentCode
       parameters:
-      - name: Monime-Space-Id
-        in: header
-        description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
-        required: true
-        schema:
-          maxLength: 100
-          pattern: ^spc-.*$
-          type: string
+        - name: Monime-Space-Id
+          in: header
           description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
-      - name: Idempotency-Key
-        in: header
-        description: This header is used to uniquely identify a request, ensuring that the operation is not performed more than once during retries.
-        required: true
-        schema:
-          maxLength: 64
-          type: string
+          required: true
+          schema:
+            maxLength: 100
+            pattern: ^spc-.*$
+            type: string
+            description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
+        - name: Idempotency-Key
+          in: header
           description: This header is used to uniquely identify a request, ensuring that the operation is not performed more than once during retries.
+          required: true
+          schema:
+            maxLength: 64
+            type: string
+            description: This header is used to uniquely identify a request, ensuring that the operation is not performed more than once during retries.
       requestBody:
         content:
           application/json:
@@ -377,8 +423,8 @@ paths:
                   example: EDSA Office Top-up
                 mode:
                   enum:
-                  - oneTime
-                  - recurrent
+                    - oneTime
+                    - recurrent
                   type: string
                   description: Specifies whether the payment code can be used only once or multiple times.
                   default: oneTime
@@ -391,7 +437,7 @@ paths:
                   properties:
                     currency:
                       type: string
-                      description: The ISO 4217 currency code.
+                      description: The [3-letter](https://en.wikipedia.org/wiki/ISO_4217) ISO currency code.
                     value:
                       type: integer
                       description: The value representation in the currency's minor unit. E.g. For 1 Leone (SLE 1), the value should be 100, denoting cents, the minor unit.
@@ -438,7 +484,7 @@ paths:
                       properties:
                         currency:
                           type: string
-                          description: The ISO 4217 currency code.
+                          description: The [3-letter](https://en.wikipedia.org/wiki/ISO_4217) ISO currency code.
                         value:
                           type: integer
                           description: The value representation in the currency's minor unit. E.g. For 1 Leone (SLE 1), the value should be 100, denoting cents, the minor unit.
@@ -455,8 +501,12 @@ paths:
                   description: The list of MoMo provider IDs for which the payment code is allowed to be used.
                   nullable: true
                   example:
-                  - m17
-                  - m18
+                    - m17
+                    - m18
+                financialAccountId:
+                  type: string
+                  description: The ID of the financial account where the amount is settled to. This default to the owner's *Main* financial account.'
+                  nullable: true
                 metadata:
                   maxProperties: 100
                   type: object
@@ -482,26 +532,26 @@ paths:
   /payment-codes/{id}:
     delete:
       tags:
-      - PaymentCode
+        - PaymentCode
       summary: Delete Payment Code
       operationId: DeletePaymentCode
       parameters:
-      - name: id
-        in: path
-        description: A unique identifier for the payment code object.
-        required: true
-        schema:
-          type: string
+        - name: id
+          in: path
           description: A unique identifier for the payment code object.
-      - name: Monime-Space-Id
-        in: header
-        description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
-        required: true
-        schema:
-          maxLength: 100
-          pattern: ^spc-.*$
-          type: string
+          required: true
+          schema:
+            type: string
+            description: A unique identifier for the payment code object.
+        - name: Monime-Space-Id
+          in: header
           description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
+          required: true
+          schema:
+            maxLength: 100
+            pattern: ^spc-.*$
+            type: string
+            description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
       responses:
         "200":
           description: OK
@@ -519,26 +569,26 @@ paths:
                     description: Contains a list of messages providing relevant information or feedback related to the query or operation
     get:
       tags:
-      - PaymentCode
+        - PaymentCode
       summary: Get Payment Code
       operationId: GetPaymentCode
       parameters:
-      - name: id
-        in: path
-        description: A unique identifier for the payment code object.
-        required: true
-        schema:
-          type: string
+        - name: id
+          in: path
           description: A unique identifier for the payment code object.
-      - name: Monime-Space-Id
-        in: header
-        description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
-        required: true
-        schema:
-          maxLength: 100
-          pattern: ^spc-.*$
-          type: string
+          required: true
+          schema:
+            type: string
+            description: A unique identifier for the payment code object.
+        - name: Monime-Space-Id
+          in: header
           description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
+          required: true
+          schema:
+            maxLength: 100
+            pattern: ^spc-.*$
+            type: string
+            description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
       responses:
         "200":
           description: OK
@@ -558,26 +608,26 @@ paths:
                     $ref: "#/components/schemas/PaymentCode"
     patch:
       tags:
-      - PaymentCode
+        - PaymentCode
       summary: Update Payment Code
       operationId: UpdatePaymentCode
       parameters:
-      - name: id
-        in: path
-        description: A unique identifier for the payment code object.
-        required: true
-        schema:
-          type: string
+        - name: id
+          in: path
           description: A unique identifier for the payment code object.
-      - name: Monime-Space-Id
-        in: header
-        description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
-        required: true
-        schema:
-          maxLength: 100
-          pattern: ^spc-.*$
-          type: string
+          required: true
+          schema:
+            type: string
+            description: A unique identifier for the payment code object.
+        - name: Monime-Space-Id
+          in: header
           description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
+          required: true
+          schema:
+            maxLength: 100
+            pattern: ^spc-.*$
+            type: string
+            description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
       requestBody:
         content:
           application/json:
@@ -597,7 +647,7 @@ paths:
                   nullable: true
                 status:
                   enum:
-                  - cancelled
+                    - cancelled
                   type: string
                   description: The status of the payment code.
                   nullable: true
@@ -636,48 +686,344 @@ paths:
                     description: Contains a list of messages providing relevant information or feedback related to the query or operation
                   result:
                     $ref: "#/components/schemas/PaymentCode"
+  /payouts:
+    get:
+      tags:
+        - Payout
+      summary: List Payouts
+      description: Retrieve a list of all payouts.
+      operationId: ListPayouts
+      parameters:
+        - name: after
+          in: query
+          description: This identifier retrieves the next items in the total result list that come just after it. Use it to get items that follows the object having this identifier in the overall list. This takes precedence over 'before'.
+          schema:
+            maxLength: 100
+            type: string
+            description: This identifier retrieves the next items in the total result list that come just after it. Use it to get items that follows the object having this identifier in the overall list. This takes precedence over 'before'.
+            nullable: true
+        - name: before
+          in: query
+          description: This identifier retrieves the next items in the total result list that comes just before it. Use it to get items that precede the object having this identifier in the overall list.
+          schema:
+            maxLength: 100
+            type: string
+            description: This identifier retrieves the next items in the total result list that comes just before it. Use it to get items that precede the object having this identifier in the overall list.
+            nullable: true
+        - name: limit
+          in: query
+          description: The maximum number of items per page that should be retrieved from the result list.
+          schema:
+            maximum: 50
+            minimum: 1
+            type: integer
+            description: The maximum number of items per page that should be retrieved from the result list.
+            default: 10
+        - name: Monime-Space-Id
+          in: header
+          description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
+          required: true
+          schema:
+            maxLength: 100
+            pattern: ^spc-.*$
+            type: string
+            description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Represents the status of the query operation, confirming if it was successful. This field is always true
+                  messages:
+                    type: array
+                    items: {}
+                    description: Contains a list of messages providing relevant information or feedback related to the query or operation
+                  result:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Payout"
+                    description: The list of items in the response
+                    nullable: true
+                  pagination:
+                    type: object
+                    properties:
+                      count:
+                        minimum: 0
+                        type: integer
+                        description: The number of items in this list response.
+                      total:
+                        minimum: 0
+                        type: integer
+                        description: The estimated total number of items matching the request.
+                        nullable: true
+                      next:
+                        type: string
+                        description: This identifier marks the first item in this response list when moving backward through the results, or the last item when moving forward. Use this identifier with the 'after' or 'before' query parameter in your next request to get the items that come after or before this item in the overall list respectively.
+                        nullable: true
+                    description: The pagination info associated with the response
+    post:
+      tags:
+        - Payout
+      summary: Create Payout
+      operationId: CreatePayout
+      parameters:
+        - name: Monime-Space-Id
+          in: header
+          description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
+          required: true
+          schema:
+            maxLength: 100
+            pattern: ^spc-.*$
+            type: string
+            description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
+        - name: Idempotency-Key
+          in: header
+          description: This header is used to uniquely identify a request, ensuring that the operation is not performed more than once during retries.
+          required: true
+          schema:
+            maxLength: 64
+            type: string
+            description: This header is used to uniquely identify a request, ensuring that the operation is not performed more than once during retries.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: CreatePayout
+              required:
+                - amount
+                - destination
+              type: object
+              properties:
+                amount:
+                  type: object
+                  properties:
+                    currency:
+                      type: string
+                      description: The [3-letter](https://en.wikipedia.org/wiki/ISO_4217) ISO currency code.
+                    value:
+                      type: integer
+                      description: The value representation in the currency's minor unit. E.g. For 1 Leone (SLE 1), the value should be 100, denoting cents, the minor unit.
+                  description: The monetary amount to pay out to the destination.
+                destination:
+                  required:
+                    - providerCode
+                    - accountId
+                  type: object
+                  properties:
+                    providerCode:
+                      type: string
+                      description: The code for the provider as identified by Monime. E.g. m17 to denote Orange Money SL
+                      example: m17
+                    accountId:
+                      type: string
+                      description: The account ID of the account in the provider's ecosystem that the payout amount will be disbursed to. E.g. +23278000000 if the provider is Orange Money.
+                      example: "+23278000000"
+                  description: The destination for the fund of the payout object.
+                source:
+                  type: object
+                  properties:
+                    financialAccountId:
+                      type: string
+                      description: The ID of the financial account where the amount is disbursed from. This default to the owner's *Main* financial account.'
+                      nullable: true
+                  description: The source of fund for the payout object.
+                metadata:
+                  maxProperties: 100
+                  type: object
+                  description: This holds key-value pairs, where both the keys and values are strings not exceeding 64 and 100 characters respectively. This allows for flexible and descriptive tagging or additional information to be associated with the object.
+                  nullable: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Represents the status of the query operation, confirming if it was successful. This field is always true
+                  messages:
+                    type: array
+                    items: {}
+                    description: Contains a list of messages providing relevant information or feedback related to the query or operation
+                  result:
+                    $ref: "#/components/schemas/Payout"
+  /payouts/{id}:
+    delete:
+      tags:
+        - Payout
+      summary: Delete Payout
+      operationId: DeletePayout
+      parameters:
+        - name: id
+          in: path
+          description: The ID for the payout object to delete
+          required: true
+          schema:
+            type: string
+            description: The ID for the payout object to delete
+        - name: Monime-Space-Id
+          in: header
+          description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
+          required: true
+          schema:
+            maxLength: 100
+            pattern: ^spc-.*$
+            type: string
+            description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Represents the status of the query operation, confirming if it was successful. This field is always true
+                  messages:
+                    type: array
+                    items: {}
+                    description: Contains a list of messages providing relevant information or feedback related to the query or operation
+    get:
+      tags:
+        - Payout
+      summary: Get Payout
+      operationId: GetPayout
+      parameters:
+        - name: id
+          in: path
+          description: The ID for the payout object to retrieve
+          required: true
+          schema:
+            type: string
+            description: The ID for the payout object to retrieve
+        - name: Monime-Space-Id
+          in: header
+          description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
+          required: true
+          schema:
+            maxLength: 100
+            pattern: ^spc-.*$
+            type: string
+            description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Represents the status of the query operation, confirming if it was successful. This field is always true
+                  messages:
+                    type: array
+                    items: {}
+                    description: Contains a list of messages providing relevant information or feedback related to the query or operation
+                  result:
+                    $ref: "#/components/schemas/Payout"
+    patch:
+      tags:
+        - Payout
+      summary: Update Payout
+      operationId: UpdatePayout
+      parameters:
+        - name: id
+          in: path
+          description: The ID for the payout object to update
+          required: true
+          schema:
+            type: string
+            description: The ID for the payout object to update
+        - name: Monime-Space-Id
+          in: header
+          description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
+          required: true
+          schema:
+            maxLength: 100
+            pattern: ^spc-.*$
+            type: string
+            description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              title: UpdatePayout
+              type: object
+              properties:
+                metadata:
+                  maxProperties: 100
+                  type: object
+                  description: Metadata attributes of the payout.
+                  nullable: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: Represents the status of the query operation, confirming if it was successful. This field is always true
+                  messages:
+                    type: array
+                    items: {}
+                    description: Contains a list of messages providing relevant information or feedback related to the query or operation
+                  result:
+                    $ref: "#/components/schemas/Payout"
   /webhooks:
     get:
       tags:
-      - Webhook
+        - Webhook
       summary: List Webhooks
       description: Retrieve a list of all webhooks.
       operationId: ListWebhooks
       parameters:
-      - name: after
-        in: query
-        description: This identifier retrieves the next items in the total result list that come just after it. Use it to get items that follows the object having this identifier in the overall list. This takes precedence over 'before'.
-        schema:
-          maxLength: 100
-          type: string
+        - name: after
+          in: query
           description: This identifier retrieves the next items in the total result list that come just after it. Use it to get items that follows the object having this identifier in the overall list. This takes precedence over 'before'.
-          nullable: true
-      - name: before
-        in: query
-        description: This identifier retrieves the next items in the total result list that comes just before it. Use it to get items that precede the object having this identifier in the overall list.
-        schema:
-          maxLength: 100
-          type: string
+          schema:
+            maxLength: 100
+            type: string
+            description: This identifier retrieves the next items in the total result list that come just after it. Use it to get items that follows the object having this identifier in the overall list. This takes precedence over 'before'.
+            nullable: true
+        - name: before
+          in: query
           description: This identifier retrieves the next items in the total result list that comes just before it. Use it to get items that precede the object having this identifier in the overall list.
-          nullable: true
-      - name: limit
-        in: query
-        description: The maximum number of items per page that should be retrieved from the result list.
-        schema:
-          maximum: 50
-          minimum: 1
-          type: integer
+          schema:
+            maxLength: 100
+            type: string
+            description: This identifier retrieves the next items in the total result list that comes just before it. Use it to get items that precede the object having this identifier in the overall list.
+            nullable: true
+        - name: limit
+          in: query
           description: The maximum number of items per page that should be retrieved from the result list.
-          default: 10
-      - name: Monime-Space-Id
-        in: header
-        description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
-        required: true
-        schema:
-          maxLength: 100
-          pattern: ^spc-.*$
-          type: string
+          schema:
+            maximum: 50
+            minimum: 1
+            type: integer
+            description: The maximum number of items per page that should be retrieved from the result list.
+            default: 10
+        - name: Monime-Space-Id
+          in: header
           description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
+          required: true
+          schema:
+            maxLength: 100
+            pattern: ^spc-.*$
+            type: string
+            description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
       responses:
         "200":
           description: OK
@@ -718,36 +1064,36 @@ paths:
                     description: The pagination info associated with the response
     post:
       tags:
-      - Webhook
+        - Webhook
       summary: Create Webhook
       operationId: CreateWebhook
       parameters:
-      - name: Monime-Space-Id
-        in: header
-        description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
-        required: true
-        schema:
-          maxLength: 100
-          pattern: ^spc-.*$
-          type: string
+        - name: Monime-Space-Id
+          in: header
           description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
-      - name: Idempotency-Key
-        in: header
-        description: This header is used to uniquely identify a request, ensuring that the operation is not performed more than once during retries.
-        required: true
-        schema:
-          maxLength: 64
-          type: string
+          required: true
+          schema:
+            maxLength: 100
+            pattern: ^spc-.*$
+            type: string
+            description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
+        - name: Idempotency-Key
+          in: header
           description: This header is used to uniquely identify a request, ensuring that the operation is not performed more than once during retries.
+          required: true
+          schema:
+            maxLength: 64
+            type: string
+            description: This header is used to uniquely identify a request, ensuring that the operation is not performed more than once during retries.
       requestBody:
         content:
           application/json:
             schema:
               title: CreateWebhook
               required:
-              - name
-              - url
-              - events
+                - name
+                - url
+                - events
               type: object
               properties:
                 name:
@@ -787,7 +1133,7 @@ paths:
                   properties:
                     hmac256:
                       required:
-                      - secret
+                        - secret
                       type: object
                       properties:
                         secret:
@@ -829,26 +1175,26 @@ paths:
   /webhooks/{id}:
     delete:
       tags:
-      - Webhook
+        - Webhook
       summary: Delete Webhook
       operationId: DeleteWebhook
       parameters:
-      - name: id
-        in: path
-        description: The ID for the webhook object to delete
-        required: true
-        schema:
-          type: string
+        - name: id
+          in: path
           description: The ID for the webhook object to delete
-      - name: Monime-Space-Id
-        in: header
-        description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
-        required: true
-        schema:
-          maxLength: 100
-          pattern: ^spc-.*$
-          type: string
+          required: true
+          schema:
+            type: string
+            description: The ID for the webhook object to delete
+        - name: Monime-Space-Id
+          in: header
           description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
+          required: true
+          schema:
+            maxLength: 100
+            pattern: ^spc-.*$
+            type: string
+            description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
       responses:
         "200":
           description: OK
@@ -866,26 +1212,26 @@ paths:
                     description: Contains a list of messages providing relevant information or feedback related to the query or operation
     get:
       tags:
-      - Webhook
+        - Webhook
       summary: Get Webhook
       operationId: GetWebhook
       parameters:
-      - name: id
-        in: path
-        description: The ID for the webhook object to retrieve
-        required: true
-        schema:
-          type: string
+        - name: id
+          in: path
           description: The ID for the webhook object to retrieve
-      - name: Monime-Space-Id
-        in: header
-        description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
-        required: true
-        schema:
-          maxLength: 100
-          pattern: ^spc-.*$
-          type: string
+          required: true
+          schema:
+            type: string
+            description: The ID for the webhook object to retrieve
+        - name: Monime-Space-Id
+          in: header
           description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
+          required: true
+          schema:
+            maxLength: 100
+            pattern: ^spc-.*$
+            type: string
+            description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
       responses:
         "200":
           description: OK
@@ -905,33 +1251,33 @@ paths:
                     $ref: "#/components/schemas/Webhook"
     patch:
       tags:
-      - Webhook
+        - Webhook
       summary: Update Webhook
       operationId: UpdateWebhook
       parameters:
-      - name: id
-        in: path
-        description: The ID for the webhook object to update
-        required: true
-        schema:
-          type: string
+        - name: id
+          in: path
           description: The ID for the webhook object to update
-      - name: Monime-Space-Id
-        in: header
-        description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
-        required: true
-        schema:
-          maxLength: 100
-          pattern: ^spc-.*$
-          type: string
+          required: true
+          schema:
+            type: string
+            description: The ID for the webhook object to update
+        - name: Monime-Space-Id
+          in: header
           description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
+          required: true
+          schema:
+            maxLength: 100
+            pattern: ^spc-.*$
+            type: string
+            description: The value is the tenancy parameter that Monime used to determine which space the request is intended for.
       requestBody:
         content:
           application/json:
             schema:
               title: UpdateWebhook
               required:
-              - url
+                - url
               type: object
               properties:
                 name:
@@ -974,7 +1320,7 @@ paths:
                   properties:
                     hmac256:
                       required:
-                      - secret
+                        - secret
                       type: object
                       properties:
                         secret:
@@ -1025,7 +1371,7 @@ components:
         code:
           type: string
           description: The unique code assigned to a bank by Monime to identify it within Monime's ecosystem.
-          example: SLB0001
+          example: SLB0004
         name:
           type: string
           description: The name of the bank.
@@ -1107,6 +1453,10 @@ components:
     Country:
       type: object
       properties:
+        id:
+          type: string
+          description: The ID of the country.
+          example: cnt-TJh76H8hj778hftdtu66gjio
         code:
           type: string
           description: The ISO 3166-1 alpha-2 country code.
@@ -1138,7 +1488,49 @@ components:
           description: The list supported currency codes in ISO 4217 format in that country. It includes the default currency's code.
           nullable: true
           example:
-          - SLE
+            - SLE
+    KYCVerification:
+      type: object
+      properties:
+        provider:
+          type: object
+          properties:
+            code:
+              type: string
+              description: The code of the provider as assigned by Monime.
+              example: m17
+            type:
+              enum:
+                - momo
+                - bank
+                - wallet
+              type: string
+              description: The type of the provider.
+            name:
+              type: string
+              description: The name of the provider
+              example: Orange Money
+          description: The provider info of the verification object.
+        accountId:
+          type: string
+          description: The ID of the financial account in the provider's ecosystem associated with this verification.
+        accountHolderProfile:
+          type: object
+          properties:
+            firstName:
+              type: string
+              description: The first name of the account holder in the provider's ecosystem.
+              nullable: true
+            lastName:
+              type: string
+              description: The last name of the account holder in the provider's ecosystem.
+              nullable: true
+          description: The  profile of the account holder in the provider's ecosystem.
+        metadata:
+          maxProperties: 100
+          type: object
+          description: The metadata of the KYC verification.
+          nullable: true
     Momo:
       type: object
       properties:
@@ -1234,15 +1626,17 @@ components:
         id:
           type: string
           description: A unique identifier for the payment code object.
+          example: pmc-TJh76H8hj778hftdtu66gjio
         name:
           maxLength: 100
           type: string
           description: The name or intent indicating the purpose or use of the payment code.
           nullable: true
+          example: Home EDSA Meter Top-up
         mode:
           enum:
-          - oneTime
-          - recurrent
+            - oneTime
+            - recurrent
           type: string
           description: Specifies whether the payment code can be used only once or multiple times.
           default: oneTime
@@ -1252,24 +1646,26 @@ components:
           default: true
         status:
           enum:
-          - pending
-          - processing
-          - expired
-          - cancelled
-          - completed
+            - pending
+            - processing
+            - expired
+            - cancelled
+            - completed
           type: string
           description: The current status of the payment code, indicating its state in the payment process
           default: pending
         ussdCode:
           type: string
           description: The USSD code that users can dial on their mobile money device to make a payment using this payment code.
-          example: "*715*1*0123456789#"
+          example: |-
+            \*715\*1\*0123456789#
+
         amount:
           type: object
           properties:
             currency:
               type: string
-              description: The ISO 4217 currency code.
+              description: The [3-letter](https://en.wikipedia.org/wiki/ISO_4217) ISO currency code.
             value:
               type: integer
               description: The value representation in the currency's minor unit. E.g. For 1 Leone (SLE 1), the value should be 100, denoting cents, the minor unit.
@@ -1311,7 +1707,7 @@ components:
               properties:
                 currency:
                   type: string
-                  description: The ISO 4217 currency code.
+                  description: The [3-letter](https://en.wikipedia.org/wiki/ISO_4217) ISO currency code.
                 value:
                   type: integer
                   description: The value representation in the currency's minor unit. E.g. For 1 Leone (SLE 1), the value should be 100, denoting cents, the minor unit.
@@ -1325,8 +1721,8 @@ components:
           description: The list of MoMo provider IDs for which the payment code is allowed to be used.
           nullable: true
           example:
-          - m17
-          - m18
+            - m17
+            - m18
         progress:
           type: object
           properties:
@@ -1341,12 +1737,16 @@ components:
               properties:
                 currency:
                   type: string
-                  description: The ISO 4217 currency code.
+                  description: The [3-letter](https://en.wikipedia.org/wiki/ISO_4217) ISO currency code.
                 value:
                   type: integer
                   description: The value representation in the currency's minor unit. E.g. For 1 Leone (SLE 1), the value should be 100, denoting cents, the minor unit.
               description: Represents the total sum of payment amounts made using this code.
           description: The progress of the payment code.
+        financialAccountId:
+          type: string
+          description: The ID of the financial account where the amount is settled to. This default to the owner's *Main* financial account.'
+          nullable: true
         expireTime:
           type: string
           description: The expiration time of the payment code.
@@ -1360,11 +1760,121 @@ components:
           type: object
           description: The metadata for the payment code.
           nullable: true
+    Payout:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier for the payout object
+        status:
+          enum:
+            - pending
+            - processing
+            - delayed
+            - completed
+            - failed
+          type: string
+          description: The status of the payout object.
+        amount:
+          type: object
+          properties:
+            currency:
+              type: string
+              description: The [3-letter](https://en.wikipedia.org/wiki/ISO_4217) ISO currency code.
+            value:
+              type: integer
+              description: The value representation in the currency's minor unit. E.g. For 1 Leone (SLE 1), the value should be 100, denoting cents, the minor unit.
+          description: The monetary amount to payout to the destination
+        source:
+          type: object
+          properties:
+            financialAccountId:
+              type: string
+              description: The ID of the financial account where the amount was disbursed from.'
+              nullable: true
+            transactionReference:
+              type: string
+              description: The Monime transaction reference for describing the debiting of the amount and charges from the financial account.
+              nullable: true
+          description: The source of fund for the payout object.
+        destination:
+          type: object
+          properties:
+            providerCode:
+              type: string
+              description: The code for the provider as identified by Monime.
+              nullable: true
+            accountId:
+              type: string
+              description: The account ID of the account in the provider's ecosystem that the payout amount was disbursed to.
+            transactionReference:
+              type: string
+              description: The transaction reference from the provider's ecosystem after the amount was disbursed.
+              nullable: true
+          description: The destination for the fund of the payout object.
+        charges:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The name of the charge object within Monime.
+              amount:
+                type: object
+                properties:
+                  currency:
+                    type: string
+                    description: The [3-letter](https://en.wikipedia.org/wiki/ISO_4217) ISO currency code.
+                  value:
+                    type: integer
+                    description: The value representation in the currency's minor unit. E.g. For 1 Leone (SLE 1), the value should be 100, denoting cents, the minor unit.
+                description: The amount of the charge that was applied on top of the payout amount.
+              metadata:
+                maxProperties: 100
+                type: object
+                description: Further metadata describing the charge object.
+                nullable: true
+          description: The charges that applied to the payout.
+          nullable: true
+        delayedReason:
+          type: string
+          description: The reason when the payout is being delayed.
+          nullable: true
+        failureDetail:
+          type: object
+          properties:
+            code:
+              enum:
+                - unknown
+                - expired
+                - providerUnknown
+                - fundInsufficient
+                - authorizationFailed
+                - providerAccountBlocked
+                - providerAccountMissing
+                - providerAccountQuotaExhausted
+              type: string
+              description: The failure code.
+            explanation:
+              type: string
+              description: An explanation of the failure code.
+          description: The detail for the failed status.
+          nullable: true
+        createTime:
+          type: string
+          description: The creation time of the payout object.
+          format: date-time
+        metadata:
+          maxProperties: 100
+          type: object
+          description: This holds key-value pairs, where both the keys and values are strings not exceeding 64 and 100 characters respectively. This allows for flexible and descriptive tagging or additional information to be associated with the object.
+          nullable: true
     Webhook:
       required:
-      - name
-      - url
-      - events
+        - name
+        - url
+        - events
       type: object
       properties:
         id:
@@ -1402,7 +1912,7 @@ components:
           properties:
             hmac256:
               required:
-              - secret
+                - secret
               type: object
               properties:
                 secret:
@@ -1420,6 +1930,10 @@ components:
             type: string
           description: Custom headers of the webhook.
           nullable: true
+        createTime:
+          type: string
+          description: The creation time of the webhook.
+          format: date-time
         metadata:
           maxProperties: 100
           type: object
@@ -1431,3 +1945,5 @@ components:
       scheme: bearer
       bearerFormat: auth-scheme
       description: "Bearer HTTP authentication specified with the header Authorization: Bearer <access_token>"
+security:
+  - bearerAuth: [ ]
