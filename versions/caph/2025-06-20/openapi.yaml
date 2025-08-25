@@ -846,6 +846,7 @@ paths:
               title: CreateFinancialAccount
               required:
                 - name
+                - currency
               type: object
               properties:
                 name:
@@ -853,11 +854,8 @@ paths:
                   type: string
                   description: Label for the financial account, e.g., 'Main Wallet' or 'Reserved Account'.
                 currency:
-                  enum:
-                    - SLE
                   type: string
                   description: ISO 4217 currency code (e.g., 'SLE', 'USD') indicating the account's currency.
-                  default: SLE
                 reference:
                   maxLength: 64
                   type: string
