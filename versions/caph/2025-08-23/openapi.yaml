@@ -3890,14 +3890,6 @@ components:
         name:
           type: string
           description: Title or label for the checkout session. Used for display in customer-facing UIs.
-        reference:
-          type: string
-          description: Optional external reference identifier (e.g., order ID) used to link this session with the developer’s backend system.
-          nullable: true
-        description:
-          type: string
-          description: Optional long-form description explaining the purpose or context of the checkout session.
-          nullable: true
         status:
           enum:
             - pending
@@ -3911,6 +3903,18 @@ components:
             - completed: Checkout completed successfully.
             - cancelled: User cancelled the session.
             - expired: Session expired due to inactivity.
+        orderNumber:
+          type: string
+          description: Internally generated order number that uniquely identifies the payment associated to this checkout session.
+          nullable: true
+        reference:
+          type: string
+          description: Optional external reference identifier (e.g., order ID) used to link this session with the developer’s backend system.
+          nullable: true
+        description:
+          type: string
+          description: Optional long-form description explaining the purpose or context of the checkout session.
+          nullable: true
         redirectUrl:
           type: string
           description: The URL where the customer should be redirected to begin the checkout session. This is typically a hosted checkout page managed by Monime.
